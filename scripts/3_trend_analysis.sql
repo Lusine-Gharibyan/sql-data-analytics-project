@@ -1,7 +1,6 @@
 /*
 ----------------------------------------------------------------------------------------------
 Change over time analysis: to track trends, growth, and changes in key metrics over time
-Cumulative analysis: to calculate running totals or moving averages for key metrics
 Part to whole analysis: to evaluate differences between categories
 ----------------------------------------------------------------------------------------------
 */
@@ -18,23 +17,6 @@ FROM gold.fact_sales
 WHERE order_date IS NOT NULL
 GROUP BY YEAR (order_date), MONTH (order_date)
 ORDER BY YEAR (order_date), MONTH (order_date);
-
--- Cumulative analysis
--- Calculate running total of sales over time and moving average of price
-SELECT 
-order_date,
-total_sales,
-SUM (total_sales) OVER (ORDER BY order_date) AS running_total,
-AVG (average_price) OVER (ORDER BY order_date) AS moving_average
-FROM (
-	SELECT 
-	DATETRUNC (YEAR, order_date) AS order_date,
-	SUM (sales_amount) AS total_sales,
-	AVG (price) AS average_price
-	FROM gold.fact_sales
-	WHERE order_date IS NOT NULL
-	GROUP BY DATETRUNC (YEAR, order_date)
-)t;
 
 -- Part to whole analysis
 -- Which categories contribute the most to overall sales?
