@@ -2,7 +2,6 @@
 ----------------------------------------------------------------------------------------------
 Change over time analysis: to track trends, growth, and changes in key metrics over time
 Cumulative analysis: to calculate running totals or moving averages for key metrics
-Performance analysis: to measure the performance of products, customers, or regions over time
 Part to whole analysis: to evaluate differences between categories
 Data segmentation analysis: to group data into meaningful categories for targeted insights
 ----------------------------------------------------------------------------------------------
@@ -23,7 +22,6 @@ ORDER BY YEAR (order_date), MONTH (order_date);
 
 -- Cumulative analysis
 -- Calculate running total of sales over time and moving average of price
-
 SELECT 
 order_date,
 total_sales,
@@ -39,34 +37,8 @@ FROM (
 	GROUP BY DATETRUNC (YEAR, order_date)
 )t;
 
--- Performance analysis
-/* Analyse the yearly performance of products by comparing their sales 
-to both the average sales performance of the product and the previous year's sales */
-
-WITH yearly_product_sales AS (
-	SELECT 
-	YEAR (s.order_date) AS order_year,
-	p.product_name AS product_name,
-	SUM (s.sales_amount) AS current_sales
-	FROM gold.fact_sales AS s
-	LEFT JOIN gold.dim_products AS p
-	ON s.product_key = p.product_key
-	WHERE s.order_date IS NOT NULL
-	GROUP BY YEAR (s.order_date), p.product_name
-)
-SELECT 
-order_year,
-product_name,
-current_sales,
-AVG (current_sales) OVER (PARTITION BY product_name) AS average_sales,
-current_sales - AVG (current_sales) OVER (PARTITION BY product_name) AS diff_avg,
-LAG (current_sales) OVER (PARTITION BY product_name ORDER BY order_year) AS py_sales,
-current_sales - LAG (current_sales) OVER (PARTITION BY product_name ORDER BY order_year) AS diff_py
-FROM yearly_product_sales;
-
 -- Part to whole analysis
 -- Which categories contribute the most to overall sales?
-
 WITH category_sales AS (
 	SELECT 
 	category,
@@ -85,9 +57,7 @@ FROM category_sales
 ORDER BY total_sales_per_cat DESC;
 
 -- Data segmentation analysis
-/*Segment products into cost ranges and 
-count how many products fall into each segment*/
-
+-- Segment products into cost ranges and count how many products fall into each segment
 WITH product_segment AS (
 	SELECT 
 	product_key,
