@@ -3,7 +3,6 @@
 Change over time analysis: to track trends, growth, and changes in key metrics over time
 Cumulative analysis: to calculate running totals or moving averages for key metrics
 Part to whole analysis: to evaluate differences between categories
-Data segmentation analysis: to group data into meaningful categories for targeted insights
 ----------------------------------------------------------------------------------------------
 */
 
@@ -55,24 +54,3 @@ SUM (total_sales_per_cat) OVER () AS total_sales,
 ROUND ((CAST (total_sales_per_cat AS FLOAT) / SUM (total_sales_per_cat) OVER ()) * 100, 2) AS percentage_of_total
 FROM category_sales
 ORDER BY total_sales_per_cat DESC;
-
--- Data segmentation analysis
--- Segment products into cost ranges and count how many products fall into each segment
-WITH product_segment AS (
-	SELECT 
-	product_key,
-	product_name,
-	cost,
-	CASE WHEN cost < 100 THEN 'Below 100'
-		 WHEN cost BETWEEN 100 AND 500 THEN '100-500'
-		 WHEN cost BETWEEN 500 AND 1000 THEN '500-1000'
-		 ELSE 'Above 1000'
-	END AS cost_range
-	FROM gold.dim_products
-)
-SELECT 
-cost_range,
-COUNT (product_key) AS total_products
-FROM product_segment
-GROUP BY cost_range
-ORDER BY total_products DESC;
