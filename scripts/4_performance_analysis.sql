@@ -103,4 +103,4 @@ cumulative_sales_pct,
 CASE WHEN cumulative_sales_pct <= 0.8 THEN 'Top_80_Percent'
 	 ELSE 'Remaining_20_Percent'
 END pareto_flag
-FROM cte2
+FROM cte2;
