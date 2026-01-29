@@ -61,7 +61,7 @@ WITH cte1 AS (
 )
 SELECT * 
 FROM cte2
-WHERE current_month_sales < previous_month_sales AND previous_month_sales < previous_2_month_sales
+WHERE current_month_sales < previous_month_sales AND previous_month_sales < previous_2_month_sales;
 
 -- Pareto Analysis (80/20 Rule) – customer sales contribution per time period
 WITH cte1 AS (
